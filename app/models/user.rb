@@ -1,4 +1,7 @@
+# coding: utf-8
 class User < ActiveRecord::Base
+  has_many :microposts, dependent: :destroy
+  
   before_save { self.email = email.downcase }
   validates :name, presence: true, length: { maximum: 50 }
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
@@ -16,9 +19,16 @@ class User < ActiveRecord::Base
     Digest::SHA1.hexdigest(token.to_s)
   end
 
+  def feed
+    # このコードは準備段階です。
+    # 完全な実装は第11章「ユーザーをフォローする」を参照してください。
+    Micropost.where("user_id = ?", id)
+  end
+  
   private
   
   def create_remember_token
     self.remember_token = User.encrypt(User.new_remember_token)
-  end  
+  end
+
 end
